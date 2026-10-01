@@ -1,0 +1,59 @@
+#!/bin/sh
+# CUPS filter for the Dell C1760nw: PDF in, HBPL v1 job out to the backend.
+# CUPS runs it as: c1760-filter job-id user title copies options [file]
+# (copies are already made by the universal filter upstream).
+
+C1760=${C1760_BIN:-/usr/local/bin/c1760}
+set -f
+
+# opt NAME OPTIONS: a job option's value, else the PPD default.
+opt() {
+    val=$(printf '%s\n' $2 | sed -n "s/^$1=//p" | tail -n 1)
+    if [ -z "$val" ] && [ -n "$PPD" ] && [ -r "$PPD" ]; then
+        val=$(sed -n "s/^\*Default$1: *\([^ ]*\).*/\1/p" "$PPD" | tr -d '\r')
+    fi
+    printf '%s' "$val"
+}
+
+case $(opt PageSize "$5") in
+    Legal) paper=legal ;;
+    Executive) paper=executive ;;
+    A4) paper=a4 ;;
+    A5) paper=a5 ;;
+    B5) paper=b5 ;;
+    Env10) paper=env10 ;;
+    EnvMonarch) paper=monarch ;;
+    EnvC5) paper=c5 ;;
+    EnvDL) paper=dl ;;
+    *) paper=letter ;;
+esac
+
+case $(opt ColorModel "$5") in
+    Gray) color=--mono ;;
+    *) color= ;;
+esac
+
+case $(opt MediaType "$5") in
+    Plain) media="--media 1" ;;
+    Bond) media="--media 2" ;;
+    Cardstock) media="--media 3" ;;
+    GlossyCardstock) media="--media 4" ;;
+    Labels) media="--media 5" ;;
+    Envelope) media="--media 6" ;;
+    Recycled) media="--media 7" ;;
+    *) media= ;;
+esac
+
+file=$6
+if [ -z "$file" ]; then
+    # Ghostscript needs a seekable PDF.
+    file=$(mktemp "${TMPDIR:-/tmp}/c1760-XXXXXX") || exit 1
+    trap 'rm -f "$file"' EXIT
+    cat > "$file"
+fi
+
+echo "INFO: Rendering for the C1760nw ($paper${color:+, mono})" >&2
+if ! "$C1760" print "$file" --paper "$paper" $color $media -J "$3" -U "$2" -o -; then
+    echo "ERROR: c1760 could not render the job" >&2
+    exit 1
+fi

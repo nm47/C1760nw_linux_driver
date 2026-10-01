@@ -1,0 +1,88 @@
+%!PS-Adobe-3.0
+%%Title: c1760 test page
+%%BoundingBox: 0 0 612 792
+%%Pages: 1
+%%EndComments
+%%Page: 1 1
+
+/mm { 72 mul 25.4 div } def
+/font { findfont exch scalefont setfont } def
+
+% Border a quarter inch in from the paper edge.
+0 setgray 0.5 setlinewidth
+18 18 576 756 rectstroke
+
+28 /Helvetica-Bold font
+54 712 moveto (Dell C1760nw - our own HBPL driver) show
+11 /Helvetica font
+54 694 moveto (Rendered by Ghostscript, encoded by c1760, sent raw to TCP port 9100.) show
+
+% Color swatches.
+10 /Helvetica font
+/swatch { % label x
+    /x exch def /label exch def
+    x 610 60 40 rectfill
+    gsave 0 setgray x 597 moveto label show grestore
+} def
+1 0 0 0 setcmykcolor (Cyan) 54 swatch
+0 1 0 0 setcmykcolor (Magenta) 124 swatch
+0 0 1 0 setcmykcolor (Yellow) 194 swatch
+0 0 0 1 setcmykcolor (Black) 264 swatch
+1 0 0 setrgbcolor (Red) 334 swatch
+0 0.6 0 setrgbcolor (Green) 404 swatch
+0 0 1 setrgbcolor (Blue) 474 swatch
+
+% Gray ramp, 0% to 100% ink.
+0 1 10 {
+    /i exch def
+    /x 54 i 46 mul add def
+    1 i 10 div sub setgray x 540 44 40 rectfill
+    0 setgray 0.25 setlinewidth x 540 44 40 rectstroke
+    x 527 moveto i 10 mul 3 string cvs show (%) show
+} for
+
+% Hue sweep.
+0 1 499 {
+    /i exch def
+    i 500 div 1 1 sethsbcolor 54 i add 470 1.2 40 rectfill
+} for
+
+% Text at several sizes and colors.
+0 setgray
+12 /Times-Roman font 54 440 moveto (Times 12pt: The quick brown fox jumps over the lazy dog. 0123456789) show
+8 /Times-Roman font 54 426 moveto (Times 8pt: The quick brown fox jumps over the lazy dog. 0123456789) show
+6 /Times-Roman font 54 416 moveto (Times 6pt: The quick brown fox jumps over the lazy dog. 0123456789) show
+10 /Courier font 54 400 moveto (Courier 10pt: fn main() { println!("hello, printer"); }) show
+12 /Helvetica-Bold font
+1 0 0 setrgbcolor 54 380 moveto (Red text) show
+0 0.5 0 setrgbcolor 134 380 moveto (Green text) show
+0 0 1 setrgbcolor 234 380 moveto (Blue text) show
+0.5 setgray 324 380 moveto (Gray text) show
+
+% Line weights.
+0 setgray 9 /Helvetica font
+/y 350 def
+[0.1 0.25 0.5 1 2] {
+    /lw exch def
+    lw setlinewidth 54 y moveto 300 y lineto stroke
+    310 y 3 sub moveto lw 5 string cvs show ( pt) show
+    /y y 14 sub def
+} forall
+
+% Millimetre rulers from the left and top paper edges, to show where the
+% printer stops printing. Long ticks every 5 mm.
+0.3 setlinewidth
+0 1 15 {
+    /i exch def
+    /len i 5 mod 0 eq { 4 mm } { 2 mm } ifelse def
+    i mm 250 moveto 0 len rlineto stroke
+    300 792 i mm sub moveto len 0 rlineto stroke
+} for
+0 250 moveto 15 mm 0 rlineto stroke
+300 792 moveto 0 15 mm neg rlineto stroke
+7 /Helvetica font
+2 mm 240 moveto (left edge, 1 mm ticks) show
+300 5 mm add 792 16 mm sub moveto (top edge, 1 mm ticks) show
+
+showpage
+%%EOF

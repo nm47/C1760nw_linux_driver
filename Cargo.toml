@@ -1,0 +1,16 @@
+[package]
+name = "c1760"
+version = "0.1.0"
+edition = "2021"
+description = "Tiny HBPLv1 driver for the Dell C1760nw (and other HBPLv1 printers)"
+license = "GPL-2.0-or-later"
+repository = "https://github.com/nm47/C1760nw_linux_driver"
+
+[dependencies]
+
+# The encoder does a lot of per-pixel work; keep debug builds usable.
+[profile.dev]
+opt-level = 2
+
+[profile.release]
+opt-level = 3
